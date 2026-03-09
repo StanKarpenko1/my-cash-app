@@ -27,4 +27,15 @@ public/   - Static assets
 **Vite:**
 - `vite.config.ts` - Dev server on :3000, proxies /api to :3001
 
+## Frontend Bootstrap
+
+**Entry files:**
+- `index.html` - HTML entry point
+- `src/main.tsx` - React root render
+- `src/App.tsx` - Root component
+
+**Scripts:**
+- `npm run dev` - Start dev server
+- `npm run build` - Production build
+
 
