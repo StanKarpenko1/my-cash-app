@@ -38,4 +38,27 @@ public/   - Static assets
 - `npm run dev` - Start dev server
 - `npm run build` - Production build
 
+## Tasks
+
+### ✅ Done
+- [x] Project setup (npm init, dependencies)
+- [x] TypeScript configuration
+- [x] Vite configuration
+- [x] Frontend bootstrap (index.html, main.tsx, App.tsx)
+
+### 🚧 In Progress
+- [ ] **Add React Router**
+  - Setup BrowserRouter
+  - Create placeholder pages (Signin, Signup, Home)
+  - Basic navigation
+
+### 📋 Backlog
+- [ ] Auth UI (signup/signin pages)
+- [ ] Backend setup (Express + lowdb)
+- [ ] User authentication
+- [ ] Transactions feature
+- [ ] Bank accounts
+- [ ] Notifications
+- [ ] Social layer (likes/comments)
+
 
