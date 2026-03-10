@@ -38,27 +38,27 @@ public/   - Static assets
 - `npm run dev` - Start dev server
 - `npm run build` - Production build
 
-## Tasks
+## Routing
 
-### ✅ Done
-- [x] Project setup (npm init, dependencies)
-- [x] TypeScript configuration
-- [x] Vite configuration
-- [x] Frontend bootstrap (index.html, main.tsx, App.tsx)
+**Setup:**
+- `src/main.tsx` - BrowserRouter wrapper
+- `src/App.tsx` - Routes + navigation
+- `src/pages/SignIn.tsx` - Login page placeholder
+- `src/pages/SignUp.tsx` - Registration page placeholder
+- `src/pages/Home.tsx` - Home page placeholder
 
-### 🚧 In Progress
-- [ ] **Add React Router**
-  - Setup BrowserRouter
-  - Create placeholder pages (Signin, Signup, Home)
-  - Basic navigation
+**Routes:**
+- `/` - Home
+- `/signin` - Sign In
+- `/signup` - Sign Up
 
-### 📋 Backlog
-- [ ] Auth UI (signup/signin pages)
-- [ ] Backend setup (Express + lowdb)
-- [ ] User authentication
-- [ ] Transactions feature
-- [ ] Bank accounts
-- [ ] Notifications
-- [ ] Social layer (likes/comments)
+## Backlog
+- Auth UI (signup/signin pages)
+- Backend setup (Express + lowdb)
+- User authentication
+- Transactions feature
+- Bank accounts
+- Notifications
+- Social layer (likes/comments)
 
 
