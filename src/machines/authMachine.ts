@@ -1,10 +1,11 @@
 import { createMachine, assign, fromPromise, createActor } from "xstate";
 import { httpClient } from "../utils/httpClient";
-import { User, SignInPayload } from "../models/user";
+import { User, SignInPayload, SignUpPayload } from "../models/user";
 
 export type AuthMachineEvents =
     | { type: "LOGIN"; username: string; password: string; remember?: boolean }
-    | { type: "LOGOUT" };
+    | { type: "LOGOUT" }
+    | { type: "SIGNUP"; firstName: string; lastName: string; username: string; password: string };
 
 export interface AuthMachineContext {
     user?: User;
@@ -27,6 +28,39 @@ export const authMachine = createMachine({
             }),
             on: {
                 LOGIN: "loading",
+                SIGNUP: "signup",
+            },
+        },
+        signup: {
+            invoke: {
+                src: fromPromise(async ({ input }: { input: AuthMachineEvents }) => {
+                    if (input.type !== "SIGNUP") throw new Error("Invalid event");
+
+                    try {
+                        const resp = await httpClient.post("/users", {
+                            firstName: input.firstName,
+                            lastName: input.lastName,
+                            username: input.username,
+                            password: input.password,
+                        });
+                        return resp.data;
+                    } catch (error) {
+                        throw new Error("Signup failed");
+                    }
+                }),
+                input: ({ event }: { event: AuthMachineEvents }) => event,
+                onDone: {
+                    target: "unauthorized",
+                    actions: assign({
+                        message: "Account created successfully! Please sign in.",
+                    }),
+                },
+                onError: {
+                    target: "unauthorized",
+                    actions: assign({
+                        message: ({ event }) => (event.error as Error).message || "Signup failed",
+                    }),
+                },
             },
         },
         loading: {

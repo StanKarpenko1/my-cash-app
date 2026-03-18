@@ -6,10 +6,12 @@ import Home from './pages/Home'
 function App() {
   return (
     <div>
-      <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>
-        <Link to="/" style={{ marginRight: '1rem' }}>Home</Link>
-        <Link to="/signin" style={{ marginRight: '1rem' }}>Sign In</Link>
-        <Link to="/signup">Sign Up</Link>
+      <nav style={{ padding: '1rem 2rem', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Link to="/">Home</Link>
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <Link to="/signin">Sign In</Link>
+          <Link to="/signup">Sign Up</Link>
+        </div>
       </nav>
 
       <div style={{ padding: '1rem' }}>

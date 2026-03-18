@@ -13,3 +13,11 @@ export interface User {
     password: string;
     remember?: boolean;
   }
+
+  export interface SignUpPayload {
+    firstName: string;
+    lastName: string;
+    username: string;
+    password: string;
+    confirmPassword: string;
+  }
