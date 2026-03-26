@@ -17,7 +17,7 @@ public/   - Static assets
 
 **Dependencies:**
 - Frontend: react, react-dom, react-router-dom, vite
-- Backend: express, cors, lowdb@1.0.0
+- Backend: express, cors, lowdb@7.0.0
 - Dev: typescript, nodemon, ts-node, concurrently
 
 **TypeScript:**
@@ -154,11 +154,11 @@ unauthorized --LOGIN--> loading --success--> authorized
 - **Why:** Click near form fields triggers blur → validation → DOM shift → navigation fails
 - **Solution:** `onMouseDown` fires before blur event
 
-## Backend API (Following RWA)
+## Backend API - Layered Architecture ✅
 
 **Stack:**
 - `express` - HTTP server
-- `lowdb` - JSON file database
+- `lowdb@7` - JSON file database
 - `passport` + `passport-local` - Authentication
 - `express-session` - Session management
 - `bcryptjs` - Password hashing
@@ -167,63 +167,78 @@ unauthorized --LOGIN--> loading --success--> authorized
 - `morgan` - Request logging
 - `cors` - Cross-origin requests
 
-**Install:**
-```bash
-npm install express passport passport-local express-session bcryptjs uuid express-validator morgan
-npm install --save-dev @types/express @types/passport @types/passport-local @types/express-session @types/bcryptjs @types/uuid @types/morgan
-```
+**Architecture Pattern:**
+Production-grade layered architecture with dependency injection:
+- **Repository** - Data access (swappable DB implementations)
+- **Service** - Business logic (reusable by REST + GraphQL)
+- **Controller** - HTTP handling (request/response, status codes)
+- **Routes** - Routing only (middleware mounting)
 
 **File Structure:**
 ```
 backend/
-  ├── app.ts              - Express server setup (middleware, routes)
-  ├── database.ts         - lowdb initialization + data access functions
-  ├── auth.ts             - Passport config + auth routes (/login, /logout, /checkAuth)
-  ├── user-routes.ts      - User CRUD routes (POST /users, GET /users/:id, PATCH /users/:id)
-  ├── helpers.ts          - Middleware (ensureAuthenticated, validateMiddleware)
-  └── validators.ts       - Input validation schemas (express-validator)
+  ├── app.ts                       - Express setup, DI wiring
+  ├── container.ts                 - Manual DI container
+  ├── types.d.ts                   - Express type extensions
+  ├── database.ts                  - Legacy (migrate to repos)
+  │
+  ├── types/                       - DTOs, type definitions
+  │   └── user-types.ts
+  │
+  ├── repositories/                - Data access layer
+  │   ├── user-repository.ts       - Interface (IUserRepository)
+  │   └── lowdb-user-repository.ts - LowDB implementation
+  │
+  ├── services/                    - Business logic layer
+  │   └── user-service.ts          - User business rules
+  │
+  ├── controllers/                 - HTTP handling layer
+  │   └── user-controller.ts       - Req/res, error handling
+  │
+  ├── routes/                      - Routing layer
+  │   ├── auth-routes.ts           - /login, /logout, /checkAuth
+  │   └── user-routes.ts           - /users/*
+  │
+  └── middleware/                  - Express middleware
+      ├── auth-middleware.ts       - ensureAuthenticated, validateMiddleware
+      ├── passport.ts              - Passport config
+      └── validators.ts            - express-validator schemas
 ```
 
-**Build Order:**
-1. Install dependencies
-2. Setup `database.ts` - lowdb adapter, User table, CRUD functions
-3. Create `helpers.ts` - ensureAuthenticated middleware
-4. Create `validators.ts` - user input validation
-5. Create `user-routes.ts` - POST /users (signup)
-6. Create `auth.ts` - Passport LocalStrategy, login/logout routes
-7. Wire up `app.ts` - middleware stack, mount routes
-8. Test with frontend
+**DI Flow:**
+- Container creates repository instances
+- Injects repos into services
+- Injects services into controllers
+- Routes receive bound controller methods
 
-**RWA Patterns:**
-- **Passport LocalStrategy** - username/password auth
-- **serializeUser/deserializeUser** - session management
-- **bcrypt.compareSync** - password verification
-- **express-session** - cookie-based sessions
-- **ensureAuthenticated** - protect routes
+**Key Benefits:**
+- **Testable** - Mock repos/services for unit tests
+- **Flexible** - Swap LowDB for PostgreSQL without touching business logic
+- **Reusable** - Services shared by REST + GraphQL (future)
+- **Type-safe** - `PublicUser = Omit<User, 'password'>` prevents leaks
 
-**Database Schema:**
-```json
-{
-  "users": [
-    {
-      "id": "uuid",
-      "username": "string",
-      "password": "bcrypt hash",
-      "firstName": "string",
-      "lastName": "string"
-    }
-  ]
-}
-```
+**Auth Pattern:**
+- Passport LocalStrategy with repository injection
+- Session-based auth (cookie: connect.sid)
+- Middleware: ensureAuthenticated guards protected routes
+- Password hashing in repository layer
 
-**Implementation Notes:**
-(Add details as we build)
+**Endpoints:**
+- `POST /users` - Signup (public)
+- `GET /users/:id` - Get user (auth, owner-only)
+- `PATCH /users/:id` - Update user (auth, owner-only)
+- `POST /login` - Login
+- `POST /logout` - Logout
+- `GET /checkAuth` - Session check
 
-## Backlog
-- Backend setup (Express + lowdb)
-- User authentication API
+**Scripts:**
+- `npm run start:api` - Run backend once
+- `npm run start:api:watch` - Backend with nodemon
+- `npm run dev:fullstack` - Frontend + backend concurrently
+
+## Next Steps
+- Add bank accounts (REST + GraphQL dual implementation)
 - Transactions feature
-- Bank accounts
 - Notifications
 - Social layer (likes/comments)
 

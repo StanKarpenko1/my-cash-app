@@ -9,6 +9,22 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true
+      },
+      '/login': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/logout': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/checkAuth': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/users': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
       }
     }
   }
